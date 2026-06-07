@@ -1,15 +1,35 @@
 ## Interface: 120005
 ## Title: PvPCallouts
-## Notes: Arena cooldown callouts using the PvPCallouts spell database.
-## Author: TimeMeansNothing, rebuild by Clawd
-## Version: 3.0.7
+## Notes: Audio and text callouts for enemy cooldowns in arena. Never miss a major CD again!
+## Author: TimeMeansNothing
+## Version: 2.5.2-original-taintfix1
 ## SavedVariables: PvPCalloutsDB
 ## IconTexture: Interface\Icons\Ability_Warrior_BattleShout
 ## X-Category: PvP
 ## X-License: MIT
+## X-Website: https://www.curseforge.com/wow/addons/pvpcallouts
+## X-Curse-Project-ID: [Your Project ID will go here]
 ## AddonCompartmentFunc: PvPCallouts_OpenOptions
 ## AddonCompartmentFuncOnEnter: PvPCallouts_OnAddonCompartmentEnter
 ## AddonCompartmentFuncOnLeave: PvPCallouts_OnAddonCompartmentLeave
 
-SpellDatabase.lua
+# Libraries
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+Libs\AceAddon-3.0\AceAddon-3.0.xml
+Libs\AceEvent-3.0\AceEvent-3.0.xml
+Libs\AceDB-3.0\AceDB-3.0.xml
+Libs\AceConsole-3.0\AceConsole-3.0.xml
+Libs\AceGUI-3.0\AceGUI-3.0.xml
+Libs\AceConfig-3.0\AceConfig-3.0.xml
+Libs\AceSerializer-3.0\AceSerializer-3.0.xml
+
+# Core Files
 Core.lua
+SpellDatabase.lua
+PvPAuraTracker.lua
+AlertsModule.lua
+Callouts.lua
+ProfileManager.lua
+Options.lua
+
