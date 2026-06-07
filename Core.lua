@@ -12,7 +12,7 @@ local optionControls
 local refreshingOptions = false
 
 local DEFAULTS = {
-    version = "3.0.2-clean",
+    version = "3.0.3-clean",
     enabled = true,
     onlyInArena = true,
     enemies = true,
