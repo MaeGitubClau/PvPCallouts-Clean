@@ -1,8 +1,8 @@
 ## Interface: 120005
-## Title: PvP Callouts Clean
-## Notes: Clean arena callouts using the original PvPCallouts spell database.
-## Author: TimeMeansNothing, clean rebuild by Clawd
-## Version: 3.0.4-clean
+## Title: PvPCallouts
+## Notes: Arena cooldown callouts using the PvPCallouts spell database.
+## Author: TimeMeansNothing, rebuild by Clawd
+## Version: 3.0.5
 ## SavedVariables: PvPCalloutsDB
 ## IconTexture: Interface\Icons\Ability_Warrior_BattleShout
 ## X-Category: PvP

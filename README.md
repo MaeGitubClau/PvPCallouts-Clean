@@ -1,6 +1,6 @@
-# PvPCallouts Clean
+# PvPCallouts
 
-PvPCallouts Clean is a small World of Warcraft addon rebuilt from the original
+PvPCallouts is a small World of Warcraft addon rebuilt from the original
 PvPCallouts spell database.
 
 The goal of this rebuild is to avoid the taint problems seen in the original
@@ -12,7 +12,7 @@ PvPCallouts addon by keeping the addon simple:
 - aura scanning wrapped with `pcall`
 - combat-log based spell cast detection
 - text callouts enabled by default so you can see whether it is working even if TTS is muted
-- update migration that turns text callouts back on after older clean builds
+- update migration that turns text callouts back on after older rebuilds
 - plain single-number TOC interface so WoW recognizes it in the AddOns list
 - no runtime event unregistering, avoiding protected `Frame:UnregisterEvent()` errors
 - arena-focused PvP callouts
@@ -33,7 +33,7 @@ PvPCallouts addon by keeping the addon simple:
    World of Warcraft/_retail_/Interface/AddOns/
    ```
 
-5. Restart World of Warcraft and enable `PvP Callouts Clean`.
+5. Restart World of Warcraft and enable `PvPCallouts`.
 
 The final path should be:
 

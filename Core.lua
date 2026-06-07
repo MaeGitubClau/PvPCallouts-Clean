@@ -12,7 +12,7 @@ local optionControls
 local refreshingOptions = false
 
 local DEFAULTS = {
-    version = "3.0.4-clean",
+    version = "3.0.5",
     enabled = true,
     onlyInArena = true,
     enemies = true,
@@ -459,7 +459,7 @@ local function CreateOptionsFrame()
 
     local subtitle = optionsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     subtitle:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
-    subtitle:SetText("Clean rebuild settings")
+    subtitle:SetText("PvPCallouts settings")
 
     optionControls = {}
     optionControls.enabled = CreateCheckbox(optionsFrame, "EnabledCheck", "Enable callouts", 24, -64, function(value)
@@ -674,7 +674,7 @@ local function Initialize()
     frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
     RefreshTracking()
-    Print("clean rebuild loaded. Type /pvpc help.")
+    Print("loaded. Type /pvpc help.")
 end
 
 frame:RegisterEvent("ADDON_LOADED")
