@@ -2,7 +2,7 @@
 ## Title: PvPCallouts
 ## Notes: Arena cooldown callouts using the PvPCallouts spell database.
 ## Author: TimeMeansNothing, rebuild by Clawd
-## Version: 3.0.6
+## Version: 3.0.7
 ## SavedVariables: PvPCalloutsDB
 ## IconTexture: Interface\Icons\Ability_Warrior_BattleShout
 ## X-Category: PvP

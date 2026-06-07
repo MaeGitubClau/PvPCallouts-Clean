@@ -12,7 +12,7 @@ local optionControls
 local refreshingOptions = false
 
 local DEFAULTS = {
-    version = "3.0.6",
+    version = "3.0.7",
     enabled = true,
     onlyInArena = true,
     enemies = true,
@@ -141,16 +141,55 @@ local function GetSpellID(aura)
         return nil
     end
 
-    return tonumber(aura.spellId)
+    local okValue, spellID = pcall(function()
+        return aura.spellId
+    end)
+    if not okValue then
+        return nil
+    end
+
+    local okNumber, cleanSpellID = pcall(tonumber, spellID)
+    if okNumber then
+        return cleanSpellID
+    end
+
+    return nil
 end
 
 local function GetAuraKey(unit, aura, spellID)
-    local auraInstanceID = type(aura) == "table" and tonumber(aura.auraInstanceID)
-    if auraInstanceID then
-        return unit .. ":" .. auraInstanceID .. ":" .. spellID
+    local okSpellID, cleanSpellID = pcall(tonumber, spellID)
+    if not okSpellID or not cleanSpellID then
+        return nil
     end
 
-    return unit .. ":" .. spellID
+    local auraInstanceID
+    if type(aura) == "table" then
+        local okInstanceID, cleanInstanceID = pcall(function()
+            return tonumber(aura.auraInstanceID)
+        end)
+        if okInstanceID then
+            auraInstanceID = cleanInstanceID
+        end
+    end
+
+    if auraInstanceID then
+        return tostring(unit) .. ":" .. tostring(auraInstanceID) .. ":" .. tostring(cleanSpellID)
+    end
+
+    return tostring(unit) .. ":" .. tostring(cleanSpellID)
+end
+
+local function SafeLookupSpell(spellID)
+    if not spellID or not spellDB or not spellDB.GetSpellByID then
+        return nil
+    end
+
+    local ok, spell = pcall(spellDB.GetSpellByID, spellDB, spellID)
+    if ok and type(spell) == "table" then
+        return spell
+    end
+
+    return nil
 end
 
 local function Speak(text)
@@ -223,7 +262,7 @@ local function HandleCombatLog()
     end
 
     spellID = tonumber(spellID)
-    local spell = spellID and spellDB and spellDB:GetSpellByID(spellID)
+    local spell = SafeLookupSpell(spellID)
     if not spell or not IsSpellAllowed(spell) then
         return
     end
@@ -263,11 +302,13 @@ local function ScanUnit(unit, currentAuras, suppress)
             end
 
             local spellID = GetSpellID(aura)
-            local spell = spellID and spellDB and spellDB:GetSpellByID(spellID)
+            local spell = SafeLookupSpell(spellID)
             if spell and IsSpellAllowed(spell) then
                 local key = GetAuraKey(unit, aura, spellID)
-                currentAuras[key] = true
-                if not suppress and not previousAuras[key] then
+                if key then
+                    currentAuras[key] = true
+                end
+                if key and not suppress and not previousAuras[key] then
                     Announce(unit, spell)
                 end
             end

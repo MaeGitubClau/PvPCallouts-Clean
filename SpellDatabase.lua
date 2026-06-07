@@ -326,16 +326,28 @@ function SpellDB:BuildLookupTable()
 end
 
 function SpellDB:GetSpellByID(spellID)
-    local cleanSpellID = tonumber(spellID)
-    if not cleanSpellID then
+    local okNumber, cleanSpellID = pcall(tonumber, spellID)
+    if not okNumber or not cleanSpellID then
         return nil
     end
 
     if not self.SPELL_LOOKUP_BY_ID then
-        self:BuildLookupTable()
+        local okBuild = pcall(function()
+            self:BuildLookupTable()
+        end)
+        if not okBuild then
+            return nil
+        end
     end
 
-    return self.SPELL_LOOKUP_BY_ID[cleanSpellID]
+    local okLookup, spell = pcall(function()
+        return self.SPELL_LOOKUP_BY_ID[cleanSpellID]
+    end)
+    if okLookup then
+        return spell
+    end
+
+    return nil
 end
 
 -- Helper function to lookup spell by unit and spellID

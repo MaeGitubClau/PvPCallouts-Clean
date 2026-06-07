@@ -16,6 +16,7 @@ PvPCallouts addon by keeping the addon simple:
 - plain single-number TOC interface so WoW recognizes it in the AddOns list
 - no runtime event unregistering, avoiding protected `Frame:UnregisterEvent()` errors
 - addon-compartment menu button for opening settings
+- guarded spell-ID lookups so protected aura values cannot break `SpellDatabase.lua`
 - arena-focused PvP callouts
 
 ## Install
