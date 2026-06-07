@@ -12,7 +12,7 @@ local optionControls
 local refreshingOptions = false
 
 local DEFAULTS = {
-    version = "3.0.3-clean",
+    version = "3.0.4-clean",
     enabled = true,
     onlyInArena = true,
     enemies = true,
@@ -290,8 +290,6 @@ local function ScanAll(suppress)
 end
 
 local function StopTracking()
-    frame:UnregisterEvent("UNIT_AURA")
-    frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     trackingActive = false
     previousAuras = {}
     trackedGUIDs = {}
@@ -299,17 +297,11 @@ local function StopTracking()
 end
 
 local function StartTracking()
-    StopTracking()
-
     if not IsTrackingAllowed() then
+        StopTracking()
         return
     end
 
-    for _, unit in ipairs(TRACKED_UNITS) do
-        frame:RegisterUnitEvent("UNIT_AURA", unit)
-    end
-
-    frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     trackingActive = true
     RefreshTrackedGUIDs()
     ScanAll(true)
@@ -678,6 +670,8 @@ local function Initialize()
     frame:RegisterEvent("PLAYER_ENTERING_WORLD")
     frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     frame:RegisterEvent("ARENA_OPPONENT_UPDATE")
+    frame:RegisterEvent("UNIT_AURA")
+    frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
     RefreshTracking()
     Print("clean rebuild loaded. Type /pvpc help.")
