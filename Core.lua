@@ -5,6 +5,8 @@ local db
 local spellDB
 local trackingActive = false
 local previousAuras = {}
+local trackedGUIDs = {}
+local recentCallouts = {}
 local optionsFrame
 local optionControls
 local refreshingOptions = false
@@ -15,7 +17,7 @@ local DEFAULTS = {
     enemies = true,
     allies = false,
     tts = true,
-    text = false,
+    text = true,
     output = "self",
     volume = 100,
     rate = 1.0,
@@ -33,6 +35,12 @@ local TRACKED_UNITS = {
 }
 
 local AURA_FILTERS = { "HELPFUL", "HARMFUL" }
+local CALLOUT_THROTTLE_SECONDS = 2.5
+local COMBAT_LOG_EVENTS = {
+    SPELL_CAST_SUCCESS = true,
+    SPELL_AURA_APPLIED = true,
+    SPELL_AURA_REFRESH = true,
+}
 
 local function Print(message)
     DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99PvPCallouts|r: " .. tostring(message))
@@ -86,6 +94,19 @@ local function IsUnitAllowed(unit)
     end
 
     return false
+end
+
+local function RefreshTrackedGUIDs()
+    trackedGUIDs = {}
+
+    for _, unit in ipairs(TRACKED_UNITS) do
+        if IsUnitAllowed(unit) then
+            local guid = UnitGUID(unit)
+            if guid then
+                trackedGUIDs[guid] = unit
+            end
+        end
+    end
 end
 
 local function IsSpellAllowed(spell)
@@ -165,12 +186,67 @@ local function TextCallout(message)
     end
 end
 
-local function Announce(unit, spell)
-    local unitName = UnitName(unit) or unit
-    local message = string.format("%s used %s", unitName, spell.name or ("spell " .. tostring(spell.id)))
+local function AnnounceName(unitName, spell)
+    local name = unitName or "Enemy"
+    local spellName = spell.name or ("spell " .. tostring(spell.id))
+    local message = string.format("%s used %s", name, spellName)
 
     TextCallout(message)
-    Speak(spell.name or message)
+    Speak(spellName)
+end
+
+local function Announce(unit, spell)
+    local unitName = UnitName(unit) or unit
+    AnnounceName(unitName, spell)
+end
+
+local function IsCalloutThrottled(key)
+    local now = GetTime()
+    local previous = recentCallouts[key]
+    if previous and now - previous < CALLOUT_THROTTLE_SECONDS then
+        return true
+    end
+
+    recentCallouts[key] = now
+    return false
+end
+
+local function HandleCombatLog()
+    if not trackingActive or not CombatLogGetCurrentEventInfo then
+        return
+    end
+
+    local ok, _, subevent, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellID = pcall(CombatLogGetCurrentEventInfo)
+    if not ok or not COMBAT_LOG_EVENTS[subevent] then
+        return
+    end
+
+    spellID = tonumber(spellID)
+    local spell = spellID and spellDB and spellDB:GetSpellByID(spellID)
+    if not spell or not IsSpellAllowed(spell) then
+        return
+    end
+
+    local guid = sourceGUID
+    local unit = trackedGUIDs[guid]
+    local name = sourceName
+
+    if not unit and destGUID then
+        guid = destGUID
+        unit = trackedGUIDs[guid]
+        name = destName
+    end
+
+    if not unit then
+        return
+    end
+
+    local key = tostring(guid) .. ":" .. tostring(spellID)
+    if IsCalloutThrottled(key) then
+        return
+    end
+
+    AnnounceName(name or UnitName(unit), spell)
 end
 
 local function ScanUnit(unit, currentAuras, suppress)
@@ -203,6 +279,8 @@ local function ScanAll(suppress)
         return
     end
 
+    RefreshTrackedGUIDs()
+
     local currentAuras = {}
     for _, unit in ipairs(TRACKED_UNITS) do
         ScanUnit(unit, currentAuras, suppress)
@@ -212,8 +290,11 @@ end
 
 local function StopTracking()
     frame:UnregisterEvent("UNIT_AURA")
+    frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     trackingActive = false
     previousAuras = {}
+    trackedGUIDs = {}
+    recentCallouts = {}
 end
 
 local function StartTracking()
@@ -227,7 +308,9 @@ local function StartTracking()
         frame:RegisterUnitEvent("UNIT_AURA", unit)
     end
 
+    frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     trackingActive = true
+    RefreshTrackedGUIDs()
     ScanAll(true)
 end
 
@@ -245,6 +328,8 @@ local function Status()
         .. ", tracking=" .. tostring(trackingActive)
         .. ", enemies=" .. tostring(db.enemies)
         .. ", allies=" .. tostring(db.allies)
+        .. ", text=" .. tostring(db.text)
+        .. ", tts=" .. tostring(db.tts)
         .. ", volume=" .. tostring(db.volume)
         .. ", rate=" .. tostring(db.rate))
 end
@@ -580,6 +665,7 @@ local function Initialize()
 
     SLASH_PVPCALLOUTSCLEAN1 = "/pvpc"
     SLASH_PVPCALLOUTSCLEAN2 = "/pvpcallouts"
+    SLASH_PVPCALLOUTSCLEAN3 = "/pvpco"
     SlashCmdList.PVPCALLOUTSCLEAN = SlashCommand
 
     frame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -600,8 +686,11 @@ frame:SetScript("OnEvent", function(_, event, ...)
     elseif event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
         RefreshTracking()
     elseif event == "ARENA_OPPONENT_UPDATE" then
+        RefreshTrackedGUIDs()
         ScanAll(true)
     elseif event == "UNIT_AURA" then
         ScanAll(false)
+    elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
+        HandleCombatLog()
     end
 end)

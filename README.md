@@ -10,6 +10,8 @@ PvPCallouts addon by keeping the addon simple:
 - no direct Blizzard chat-frame hooks
 - no protected UI frame hooks
 - aura scanning wrapped with `pcall`
+- combat-log based spell cast detection
+- text callouts enabled by default so you can see whether it is working even if TTS is muted
 - arena-focused PvP callouts
 
 ## Install
@@ -38,7 +40,14 @@ Interface/AddOns/PvPCallouts/PvPCallouts.toc
 
 ## Commands
 
-Use `/pvpcallouts` or `/pvpco` in game.
+Use `/pvpc`, `/pvpcallouts`, or `/pvpco` in game.
+
+Useful checks:
+
+- `/pvpc test` sends a test text and TTS callout.
+- `/pvpc status` shows whether tracking, text, and TTS are enabled.
+- `/pvpc text on` forces visible chat-frame callouts on.
+- `/pvpc arena off` lets you test outside arena.
 
 ## Notes
 
