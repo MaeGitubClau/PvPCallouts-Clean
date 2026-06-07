@@ -12,6 +12,7 @@ local optionControls
 local refreshingOptions = false
 
 local DEFAULTS = {
+    version = "3.0.2-clean",
     enabled = true,
     onlyInArena = true,
     enemies = true,
@@ -323,7 +324,8 @@ local function RefreshTracking()
 end
 
 local function Status()
-    Print("enabled=" .. tostring(db.enabled)
+    Print("version=" .. tostring(db.version)
+        .. ", enabled=" .. tostring(db.enabled)
         .. ", arenaOnly=" .. tostring(db.onlyInArena)
         .. ", tracking=" .. tostring(trackingActive)
         .. ", enemies=" .. tostring(db.enemies)
@@ -656,7 +658,12 @@ end
 local function Initialize()
     PvPCalloutsDB = PvPCalloutsDB or {}
     db = PvPCalloutsDB
+    local previousVersion = db.version
     CopyDefaults(DEFAULTS, db)
+    if previousVersion ~= DEFAULTS.version then
+        db.text = true
+        db.version = DEFAULTS.version
+    end
 
     spellDB = addon.SpellDB
     if spellDB and spellDB.BuildLookupTable then

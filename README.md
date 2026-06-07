@@ -12,6 +12,7 @@ PvPCallouts addon by keeping the addon simple:
 - aura scanning wrapped with `pcall`
 - combat-log based spell cast detection
 - text callouts enabled by default so you can see whether it is working even if TTS is muted
+- update migration that turns text callouts back on after older clean builds
 - arena-focused PvP callouts
 
 ## Install
