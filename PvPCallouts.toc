@@ -2,11 +2,14 @@
 ## Title: PvPCallouts
 ## Notes: Arena cooldown callouts using the PvPCallouts spell database.
 ## Author: TimeMeansNothing, rebuild by Clawd
-## Version: 3.0.5
+## Version: 3.0.6
 ## SavedVariables: PvPCalloutsDB
 ## IconTexture: Interface\Icons\Ability_Warrior_BattleShout
 ## X-Category: PvP
 ## X-License: MIT
+## AddonCompartmentFunc: PvPCallouts_OpenOptions
+## AddonCompartmentFuncOnEnter: PvPCallouts_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: PvPCallouts_OnAddonCompartmentLeave
 
 SpellDatabase.lua
 Core.lua

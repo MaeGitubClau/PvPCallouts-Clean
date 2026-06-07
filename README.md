@@ -15,6 +15,7 @@ PvPCallouts addon by keeping the addon simple:
 - update migration that turns text callouts back on after older rebuilds
 - plain single-number TOC interface so WoW recognizes it in the AddOns list
 - no runtime event unregistering, avoiding protected `Frame:UnregisterEvent()` errors
+- addon-compartment menu button for opening settings
 - arena-focused PvP callouts
 
 ## Install
@@ -44,6 +45,8 @@ Interface/AddOns/PvPCallouts/PvPCallouts.toc
 ## Commands
 
 Use `/pvpc`, `/pvpcallouts`, or `/pvpco` in game.
+
+You can also open the settings from WoW's addon-compartment menu button.
 
 Useful checks:
 

@@ -12,7 +12,7 @@ local optionControls
 local refreshingOptions = false
 
 local DEFAULTS = {
-    version = "3.0.5",
+    version = "3.0.6",
     enabled = true,
     onlyInArena = true,
     enemies = true,
@@ -538,6 +538,27 @@ local function OpenOptions()
 
     RefreshOptions()
     optionsFrame:Show()
+end
+
+function PvPCallouts_OpenOptions()
+    OpenOptions()
+end
+
+function PvPCallouts_OnAddonCompartmentEnter(button)
+    if not GameTooltip then
+        return
+    end
+
+    GameTooltip:SetOwner(button, "ANCHOR_LEFT")
+    GameTooltip:SetText("PvPCallouts")
+    GameTooltip:AddLine("Open settings", 1, 1, 1)
+    GameTooltip:Show()
+end
+
+function PvPCallouts_OnAddonCompartmentLeave()
+    if GameTooltip then
+        GameTooltip:Hide()
+    end
 end
 
 local function Help()
